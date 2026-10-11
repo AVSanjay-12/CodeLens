@@ -1,6 +1,10 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 
 class Settings(BaseSettings):
@@ -12,16 +16,14 @@ class Settings(BaseSettings):
 
     api_prefix: str = "/api"
 
-    database_url: str = (
-        "postgresql+psycopg://temp_placeholder"
-    )
+    database_url: str
     redis_url: str = "redis://localhost:6379/0"
 
     ollama_base_url: str = "http://localhost:11434"
-    ollama_model: str = "llama3.2:3b"
+    ollama_model: str = "qwen2.5-coder:7b"
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=PROJECT_ROOT / ".env",
         env_file_encoding="utf-8",
         extra="ignore",
     )
