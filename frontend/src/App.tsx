@@ -48,9 +48,39 @@ function App() {
     }
   }, []);
 
-  useEffect(() => {
-    void checkHealth();
-  }, [checkHealth]);
+useEffect(() => {
+  let cancelled = false;
+
+  async function loadHealth() {
+    setError(null);
+
+    try {
+      const result = await fetchServiceHealth();
+
+      if (!cancelled) {
+        setHealth(result);
+        setLastChecked(new Date());
+      }
+    } catch {
+      if (!cancelled) {
+        setHealth(null);
+        setError(
+          "Unable to reach the CodeLens API. Check whether the backend is running.",
+        );
+      }
+    } finally {
+      if (!cancelled) {
+        setLoading(false);
+      }
+    }
+  }
+
+  void loadHealth();
+
+  return () => {
+    cancelled = true;
+  };
+}, []);
 
   const isHealthy = health?.status === "ok";
 
